@@ -2,7 +2,33 @@ import { AlertTriangle, Droplet, Info, ShieldCheck, TrendingUp } from 'lucide-re
 import ProbabilityBars from './ProbabilityBars';
 
 const ResultCard = ({ result }) => {
-  const { class_name, hydration, stone_risk, urine_color, confidence, advice, probabilities } = result;
+  const {
+    class_name,
+    hydration,
+    stone_risk,
+    urine_color,
+    confidence,
+    advice,
+    probabilities,
+  } = result;
+
+  const normalizedProbabilities = probabilities
+    ? Object.fromEntries(
+        Object.entries(probabilities).map(([key, value]) => {
+          const probability =
+            typeof value === 'number' ? value : Number(value?.probability || 0);
+
+          return [
+            key,
+            {
+              label: value?.class_name || key,
+              hydration: value?.hydration || key,
+              probability,
+            },
+          ];
+        })
+      )
+    : {};
 
   const getRiskTheme = () => {
     if (class_name === 'Class 1') {
@@ -36,18 +62,26 @@ const ResultCard = ({ result }) => {
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
             <h3 className="text-2xl font-bold text-primary">Prediction Result</h3>
-            <p className="text-sm text-medical-subtext">Generated on {new Date().toLocaleDateString()}</p>
+            <p className="text-sm text-medical-subtext">
+              Generated on {new Date().toLocaleDateString()}
+            </p>
           </div>
 
-          <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${riskTheme.className}`}>
+          <div
+            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${riskTheme.className}`}
+          >
             {riskTheme.icon}
             {riskTheme.badge}
           </div>
         </div>
 
         <div className="flex items-end gap-2">
-          <span className="text-4xl font-black text-primary">{Number(confidence).toFixed(1)}%</span>
-          <span className="mb-1 text-sm font-medium text-medical-subtext">Confidence</span>
+          <span className="text-4xl font-black text-primary">
+            {Number(confidence || 0).toFixed(1)}%
+          </span>
+          <span className="mb-1 text-sm font-medium text-medical-subtext">
+            Confidence
+          </span>
         </div>
       </div>
 
@@ -59,21 +93,33 @@ const ResultCard = ({ result }) => {
           </div>
 
           <div className="rounded-xl bg-slate-50 p-4">
-            <p className="mb-1 text-xs font-bold uppercase text-medical-subtext">Hydration</p>
+            <p className="mb-1 text-xs font-bold uppercase text-medical-subtext">
+              Hydration
+            </p>
             <p className="text-lg font-bold text-primary">{hydration}</p>
           </div>
 
           <div className="rounded-xl bg-slate-50 p-4">
-            <p className="mb-1 text-xs font-bold uppercase text-medical-subtext">Stone Risk</p>
+            <p className="mb-1 text-xs font-bold uppercase text-medical-subtext">
+              Stone Risk
+            </p>
             <p className="text-lg font-bold text-primary">{stone_risk}</p>
           </div>
 
           <div className="rounded-xl bg-slate-50 p-4">
-            <p className="mb-1 text-xs font-bold uppercase text-medical-subtext">Detected Color</p>
+            <p className="mb-1 text-xs font-bold uppercase text-medical-subtext">
+              Detected Color
+            </p>
             <div className="flex items-center gap-2">
               <div
                 className="h-4 w-4 rounded-full border border-slate-200"
-                style={{ backgroundColor: urine_color.toLowerCase().includes('pale') ? '#FDFD96' : urine_color.toLowerCase().includes('dark') ? '#FFCC00' : '#8B4513' }}
+                style={{
+                  backgroundColor: urine_color?.toLowerCase().includes('pale')
+                    ? '#FDFD96'
+                    : urine_color?.toLowerCase().includes('dark')
+                    ? '#FFCC00'
+                    : '#8B4513',
+                }}
               />
               <p className="text-lg font-bold text-primary">{urine_color}</p>
             </div>
@@ -83,9 +129,15 @@ const ResultCard = ({ result }) => {
         <div>
           <div className="mb-4 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-bold uppercase tracking-wide text-primary">Class Probabilities</h4>
+            <h4 className="text-sm font-bold uppercase tracking-wide text-primary">
+              Class Probabilities
+            </h4>
           </div>
-          <ProbabilityBars probabilities={probabilities} activeClass={hydration} />
+
+          <ProbabilityBars
+            probabilities={normalizedProbabilities}
+            activeClass={hydration}
+          />
         </div>
 
         <div className="rounded-2xl border border-primary/15 bg-primary/5 p-5">
