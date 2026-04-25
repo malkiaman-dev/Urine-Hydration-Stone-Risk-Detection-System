@@ -18,6 +18,7 @@ const UploadAnalyzer = () => {
     'https://urine-hydration-stone-risk-detection-2o5a.onrender.com';
 
   const API_URL = `${apiBaseUrl.replace(/\/$/, '')}/predict`;
+  console.log("API URL:", API_URL);
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
