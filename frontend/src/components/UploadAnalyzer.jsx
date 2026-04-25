@@ -185,8 +185,7 @@ const UploadAnalyzer = () => {
                   </p>
 
                   <p className="mt-2 max-w-xs text-xs font-medium text-amber-600">
-                    Please upload only a clear urine sample image. Irrelevant
-                    images will be rejected.
+                    Please upload only a clear urine sample image.
                   </p>
 
                   <input
