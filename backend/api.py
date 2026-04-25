@@ -10,6 +10,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.feature_extraction import extract_features
+from src.image_validation import is_urine_like
 from src.model_utils import load_model
 from src.result_mapping import RESULTS
 
@@ -87,6 +88,12 @@ async def predict(file: UploadFile = File(...)):
         )
 
     image_bgr = decode_image_bytes(image_bytes)
+
+    if not is_urine_like(image_bgr):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid image. Please upload a clear urine sample image.",
+        )
 
     try:
         model, scaler, label_encoder = get_model_artifacts()

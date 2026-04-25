@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, AlertCircle, Loader2, Microscope, UploadCloud, X, ImageIcon } from 'lucide-react';
+import {
+  Activity,
+  AlertCircle,
+  Loader2,
+  Microscope,
+  UploadCloud,
+  X,
+  ImageIcon,
+} from 'lucide-react';
 import axios from 'axios';
 import ResultCard from './ResultCard';
 
@@ -106,9 +114,14 @@ const UploadAnalyzer = () => {
       console.error('Prediction API Error:', requestError);
 
       if (requestError.response?.status === 422) {
-        setError('Invalid request format. Ensure backend expects multipart form field named "file".');
+        setError(
+          'Invalid request format. Ensure backend expects multipart form field named "file".'
+        );
       } else {
-        setError('Unable to connect to backend. Please try again later.');
+        setError(
+          requestError.response?.data?.detail ||
+            'Unable to connect to backend. Please try again later.'
+        );
       }
     } finally {
       setLoading(false);
@@ -121,7 +134,8 @@ const UploadAnalyzer = () => {
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <h2 className="text-3xl font-bold text-primary">Upload & Analyze</h2>
           <p className="mt-3 text-medical-subtext">
-            Upload a clear urine sample image for AI-powered hydration and kidney stone risk screening.
+            Upload a clear urine sample image for AI-powered hydration and kidney
+            stone risk screening.
           </p>
         </div>
 
@@ -131,7 +145,9 @@ const UploadAnalyzer = () => {
               onDragOver={onDragOver}
               onDrop={onDrop}
               className={`relative h-80 overflow-hidden rounded-3xl border-2 border-dashed bg-white transition-all duration-300 ${
-                preview ? 'border-primary/25' : 'border-slate-300 hover:border-primary/50'
+                preview
+                  ? 'border-primary/25'
+                  : 'border-slate-300 hover:border-primary/50'
               }`}
             >
               {preview ? (
@@ -139,7 +155,7 @@ const UploadAnalyzer = () => {
                   <img
                     src={preview}
                     alt="Uploaded urine sample preview"
-                    className="h-full w-full rounded-2xl object-contain bg-slate-50"
+                    className="h-full w-full rounded-2xl bg-slate-50 object-contain"
                   />
 
                   <button
@@ -155,11 +171,24 @@ const UploadAnalyzer = () => {
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                     <UploadCloud className="h-8 w-8 text-primary" />
                   </div>
-                  <p className="text-lg font-bold text-primary">Drag & drop image here</p>
-                  <p className="mt-1 text-sm text-medical-subtext">or click anywhere in this box to browse files</p>
+
+                  <p className="text-lg font-bold text-primary">
+                    Drag & drop image here
+                  </p>
+
+                  <p className="mt-1 text-sm text-medical-subtext">
+                    or click anywhere in this box to browse files
+                  </p>
+
                   <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-medical-subtext">
                     PNG / JPG / JPEG / WEBP · Max 5MB
                   </p>
+
+                  <p className="mt-2 max-w-xs text-xs font-medium text-amber-600">
+                    Please upload only a clear urine sample image. Irrelevant
+                    images will be rejected.
+                  </p>
+
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -217,10 +246,17 @@ const UploadAnalyzer = () => {
                       <Microscope className="h-8 w-8 text-primary/50" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-primary">Analyzing Biomarkers</h3>
+
+                  <h3 className="text-xl font-bold text-primary">
+                    Analyzing Biomarkers
+                  </h3>
                 </motion.div>
               ) : result ? (
-                <motion.div key="result" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
                   <ResultCard result={result} />
                 </motion.div>
               ) : (
