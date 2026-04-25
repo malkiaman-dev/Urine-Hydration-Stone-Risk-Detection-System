@@ -21,8 +21,8 @@ const Hero = () => {
               </span> */}
 
               <h1 className="mt-6 text-4xl font-extrabold leading-tight text-primary sm:text-5xl lg:text-6xl">
-                From Urine Color to Stone Risk:
-                <span className="gradient-text block">An AI-Driven Diagnostic Tool for Dehydration and Nephrolithiasis</span>
+                AI-Powered Detection of
+                <span className="gradient-text block">Dehydration & Stone Risk</span>
               </h1>
 
               <p className="mt-6 max-w-xl text-base leading-relaxed text-medical-subtext sm:text-lg">
