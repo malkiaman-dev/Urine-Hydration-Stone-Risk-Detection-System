@@ -1,4 +1,8 @@
+import sys
 import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(BASE_DIR)
 import cv2
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, UploadFile

@@ -1,11 +1,8 @@
-streamlit
 fastapi
 uvicorn
 python-multipart
-opencv-python
 numpy
-pandas
+opencv-python-headless
 scikit-learn
-matplotlib
 joblib
-Pillow
+pillow
