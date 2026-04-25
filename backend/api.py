@@ -3,6 +3,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
+
 import cv2
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -18,16 +19,13 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Update this after Vercel deployment with your real frontend URL
-ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://*.vercel.app",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://urine-hydration-stone-risk-detectio.vercel.app",
+    ],
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
@@ -129,7 +127,7 @@ async def predict(file: UploadFile = File(...)):
                 "probability": round(float(probability * 100), 1),
             }
 
-        response = {
+        return {
             "status": "success",
             "class_label": class_label,
             "class_name": mapped_result["class_name"],
@@ -140,8 +138,6 @@ async def predict(file: UploadFile = File(...)):
             "advice": mapped_result["advice"],
             "probabilities": class_probabilities,
         }
-
-        return response
 
     except HTTPException:
         raise
