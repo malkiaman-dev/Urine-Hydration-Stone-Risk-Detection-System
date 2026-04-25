@@ -1,0 +1,11 @@
+streamlit
+fastapi
+uvicorn
+python-multipart
+opencv-python
+numpy
+pandas
+scikit-learn
+matplotlib
+joblib
+Pillow

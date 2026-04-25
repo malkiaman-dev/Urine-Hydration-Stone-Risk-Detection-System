@@ -1,0 +1,24 @@
+
+Urine Hydration and Stone Risk Model Training Report
+
+Total Images: 75
+Classes: [np.str_('class1_normal_hydration'), np.str_('class2_dehydrated'), np.str_('class3_high_stone_risk')]
+
+Test Accuracy: 84.21%
+
+Cross Validation Accuracy:
+Mean: 89.33%
+Std: 6.80%
+
+Classification Report:
+
+                         precision    recall  f1-score   support
+
+class1_normal_hydration       1.00      0.67      0.80         6
+      class2_dehydrated       0.71      0.83      0.77         6
+ class3_high_stone_risk       0.88      1.00      0.93         7
+
+               accuracy                           0.84        19
+              macro avg       0.86      0.83      0.83        19
+           weighted avg       0.86      0.84      0.84        19
+
