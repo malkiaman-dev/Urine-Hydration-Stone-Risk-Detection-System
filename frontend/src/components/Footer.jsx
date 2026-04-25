@@ -42,15 +42,15 @@ const Footer = () => {
             <ul className="space-y-4 text-sm opacity-85">
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-secondary-light" />
-                <span>support@urinehealth.ai</span>
+                <span>sumiakhanzoology@gmail.com</span>
               </li>
-              <li className="flex items-center gap-3">
+              {/* <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-secondary-light" />
                 <span>+1 (555) 000-0000</span>
-              </li>
+              </li> */}
               <li className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-secondary-light" />
-                <span>Medical Tech Hub, SF</span>
+                <span>Government girls degree college Yar Hussain, swabi</span>
               </li>
             </ul>
           </div>

@@ -29,7 +29,7 @@ const Navbar = () => {
           <div className="bg-primary p-2 rounded-lg shadow-sm">
             <ActivitySquare className="text-white w-5 h-5" />
           </div>
-          <span className="text-lg sm:text-xl font-bold text-primary tracking-tight">Hydration<span className="text-secondary">AI</span></span>
+          <span className="text-lg sm:text-xl font-bold text-primary tracking-tight">Sumia Khan Hydration<span className="text-secondary">AI</span></span>
         </a>
 
         <div className="hidden lg:flex items-center gap-7">
