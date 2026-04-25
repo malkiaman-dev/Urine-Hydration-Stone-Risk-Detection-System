@@ -13,13 +13,15 @@ from src.feature_extraction import extract_features
 from src.model_utils import save_model
 
 
-DATASET_DIR = "dataset"
-OUTPUT_DIR = "outputs"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATASET_DIR = os.path.join(BASE_DIR, "dataset")
+OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
 
 CLASS_FOLDERS = [
     "class1_normal_hydration",
     "class2_dehydrated",
-    "class3_high_stone_risk"
+    "class3_high_stone_risk",
 ]
 
 
@@ -37,7 +39,6 @@ def load_dataset():
         for file_name in os.listdir(class_path):
             if file_name.lower().endswith((".jpg", ".jpeg", ".png")):
                 image_path = os.path.join(class_path, file_name)
-
                 image = cv2.imread(image_path)
 
                 if image is None:
@@ -54,7 +55,9 @@ def load_dataset():
 
 
 def plot_confusion_matrix(cm, labels):
-    plt.figure(figsize=(7, 5))
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    plt.figure(figsize=(8, 6))
     plt.imshow(cm)
     plt.title("Confusion Matrix")
     plt.xlabel("Predicted")
@@ -67,7 +70,7 @@ def plot_confusion_matrix(cm, labels):
             plt.text(j, i, cm[i, j], ha="center", va="center")
 
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, "confusion_matrix.png"))
+    plt.savefig(os.path.join(OUTPUT_DIR, "confusion_matrix.png"), dpi=300)
     plt.close()
 
 
@@ -93,14 +96,14 @@ def main():
         y_encoded,
         test_size=0.25,
         random_state=42,
-        stratify=y_encoded
+        stratify=y_encoded,
     )
 
     model = RandomForestClassifier(
         n_estimators=300,
         max_depth=None,
         random_state=42,
-        class_weight="balanced"
+        class_weight="balanced",
     )
 
     print("Training model...")
@@ -109,16 +112,31 @@ def main():
     y_pred = model.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
+
     report = classification_report(
         y_test,
         y_pred,
-        target_names=label_encoder.classes_
+        target_names=label_encoder.classes_,
     )
 
     cm = confusion_matrix(y_test, y_pred)
 
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    cv_scores = cross_val_score(model, X_scaled, y_encoded, cv=cv)
+    min_class_count = min(np.bincount(y_encoded))
+    n_splits = min(5, min_class_count)
+
+    if n_splits >= 2:
+        cv = StratifiedKFold(
+            n_splits=n_splits,
+            shuffle=True,
+            random_state=42,
+        )
+        cv_scores = cross_val_score(model, X_scaled, y_encoded, cv=cv)
+        cv_mean = cv_scores.mean() * 100
+        cv_std = cv_scores.std() * 100
+    else:
+        cv_scores = []
+        cv_mean = 0
+        cv_std = 0
 
     save_model(model, scaler, label_encoder)
 
@@ -133,27 +151,32 @@ Classes: {list(label_encoder.classes_)}
 Test Accuracy: {accuracy * 100:.2f}%
 
 Cross Validation Accuracy:
-Mean: {cv_scores.mean() * 100:.2f}%
-Std: {cv_scores.std() * 100:.2f}%
+Mean: {cv_mean:.2f}%
+Std: {cv_std:.2f}%
 
 Classification Report:
 
 {report}
 """
 
-    with open(os.path.join(OUTPUT_DIR, "training_report.txt"), "w") as f:
+    with open(os.path.join(OUTPUT_DIR, "training_report.txt"), "w", encoding="utf-8") as f:
         f.write(report_text)
 
-    accuracy_df = pd.DataFrame({
-        "Metric": ["Test Accuracy", "CV Mean Accuracy", "CV Std"],
-        "Value": [
-            accuracy * 100,
-            cv_scores.mean() * 100,
-            cv_scores.std() * 100
-        ]
-    })
+    accuracy_df = pd.DataFrame(
+        {
+            "Metric": ["Test Accuracy", "CV Mean Accuracy", "CV Std"],
+            "Value": [
+                accuracy * 100,
+                cv_mean,
+                cv_std,
+            ],
+        }
+    )
 
-    accuracy_df.to_csv(os.path.join(OUTPUT_DIR, "accuracy_report.csv"), index=False)
+    accuracy_df.to_csv(
+        os.path.join(OUTPUT_DIR, "accuracy_report.csv"),
+        index=False,
+    )
 
     print(report_text)
     print("Model saved successfully in model/ folder.")
