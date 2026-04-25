@@ -5,7 +5,10 @@ import axios from 'axios';
 import ResultCard from './ResultCard';
 
 const UploadAnalyzer = () => {
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  const apiBaseUrl =
+    import.meta.env.VITE_API_URL ||
+    'https://urine-hydration-stone-risk-detection-2o5a.onrender.com';
+
   const API_URL = `${apiBaseUrl.replace(/\/$/, '')}/predict`;
 
   const [image, setImage] = useState(null);
@@ -105,7 +108,7 @@ const UploadAnalyzer = () => {
       if (requestError.response?.status === 422) {
         setError('Invalid request format. Ensure backend expects multipart form field named "file".');
       } else {
-        setError('Unable to connect to backend. Confirm FastAPI server is running at http://localhost:8000.');
+        setError('Unable to connect to backend. Please try again later.');
       }
     } finally {
       setLoading(false);
@@ -154,7 +157,9 @@ const UploadAnalyzer = () => {
                   </div>
                   <p className="text-lg font-bold text-primary">Drag & drop image here</p>
                   <p className="mt-1 text-sm text-medical-subtext">or click anywhere in this box to browse files</p>
-                  <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-medical-subtext">PNG / JPG / JPEG / WEBP · Max 5MB</p>
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-medical-subtext">
+                    PNG / JPG / JPEG / WEBP · Max 5MB
+                  </p>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -213,34 +218,14 @@ const UploadAnalyzer = () => {
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-primary">Analyzing Biomarkers</h3>
-                  <p className="mt-2 max-w-sm text-sm text-medical-subtext">
-                    The ML model is evaluating color and hydration-related indicators to generate risk probabilities.
-                  </p>
                 </motion.div>
               ) : result ? (
-                <motion.div
-                  key="result"
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
+                <motion.div key="result" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
                   <ResultCard result={result} />
                 </motion.div>
               ) : (
-                <motion.div
-                  key="idle"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex h-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-white p-10 text-center"
-                >
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
-                    <ImageIcon className="h-7 w-7 text-slate-400" />
-                  </div>
-                  <p className="text-lg font-semibold text-primary">Result panel is ready</p>
-                  <p className="mt-1 max-w-xs text-sm text-medical-subtext">
-                    Once you upload an image and start analysis, confidence, probabilities, risk badge, and advice will appear here.
-                  </p>
+                <motion.div className="flex h-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-white p-10 text-center">
+                  <ImageIcon className="h-7 w-7 text-slate-400" />
                 </motion.div>
               )}
             </AnimatePresence>
