@@ -6,14 +6,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'Analyze', href: '#analysis' },
@@ -22,64 +14,115 @@ const Navbar = () => {
     { name: 'Disclaimer', href: '#disclaimer' },
   ];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-nav py-3 shadow-sm' : 'bg-transparent py-5'}`}>
+    <nav
+      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
+        scrolled || isOpen ? 'glass-nav py-3 shadow-sm' : 'bg-transparent py-5'
+      }`}
+    >
       <div className="container flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2">
-          <div className="bg-primary p-2 rounded-lg shadow-sm">
-            <ActivitySquare className="text-white w-5 h-5" />
+        <a href="#home" onClick={closeMenu} className="flex items-center gap-2">
+          <div className="rounded-lg bg-primary p-2 shadow-sm">
+            <ActivitySquare className="h-5 w-5 text-white" />
           </div>
-          <span className="text-lg sm:text-xl font-bold text-primary tracking-tight">Sumia Khan Hydration<span className="text-secondary">AI</span></span>
+
+          <span className="text-lg font-bold tracking-tight text-primary sm:text-xl">
+            Sumia Khan Hydration<span className="text-secondary">AI</span>
+          </span>
         </a>
 
-        <div className="hidden lg:flex items-center gap-7">
+        <div className="hidden items-center gap-7 lg:flex">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="text-sm font-semibold text-medical-text/80 hover:text-primary transition-colors"
+              className="text-sm font-semibold text-medical-text/80 transition-colors hover:text-primary"
             >
               {link.name}
             </a>
           ))}
-          <a href="#analysis" className="btn-primary py-2.5 px-5 text-sm">
+
+          <a href="#analysis" className="btn-primary px-5 py-2.5 text-sm">
             Start Screening
           </a>
         </div>
 
-        <button className="lg:hidden text-primary" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle navigation menu">
-          {isOpen ? <X /> : <Menu />}
+        <button
+          type="button"
+          className="relative z-[70] flex h-10 w-10 items-center justify-center rounded-xl border border-primary/10 bg-white text-primary shadow-sm lg:hidden"
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-b border-slate-100 overflow-hidden"
-          >
-            <div className="container flex flex-col py-5 gap-4">
-              {navLinks.map((link) => (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close menu overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeMenu}
+              className="fixed inset-0 z-[55] bg-black/30 backdrop-blur-sm lg:hidden"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.22 }}
+              className="fixed left-4 right-4 top-20 z-[60] overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl lg:hidden"
+            >
+              <div className="flex flex-col gap-2 p-4">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    onClick={closeMenu}
+                    className="rounded-2xl px-4 py-3 text-sm font-bold text-medical-text/85 transition-colors hover:bg-primary/5 hover:text-primary"
+                  >
+                    {link.name}
+                  </a>
+                ))}
+
                 <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-medical-text/85 hover:text-primary font-semibold"
+                  href="#analysis"
+                  onClick={closeMenu}
+                  className="btn-primary mt-2 w-full justify-center"
                 >
-                  {link.name}
+                  Start Screening
                 </a>
-              ))}
-              <a
-                href="#analysis"
-                onClick={() => setIsOpen(false)}
-                className="btn-primary w-full mt-2"
-              >
-                Start Screening
-              </a>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>
