@@ -1,16 +1,33 @@
-# React + Vite
+# 💧 Urine Hydration & Kidney Stone Risk Screening System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered web application that analyzes urine sample images to detect hydration status, kidney stone risk level, urine color classification, and confidence score with advice.
 
-Currently, two official plugins are available:
+## 🚀 Features
+- Upload urine sample image
+- Take photo directly from mobile camera
+- AI-based prediction system
+- Responsive professional UI
+- FastAPI backend API
+- React + Vite frontend deployed on Vercel
+- Python backend deployed on Render
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🧠 Prediction Classes
+### Class 1: Normal Hydration
+### Class 2: Dehydrated
+### Class 3: High Stone Risk
 
-## React Compiler
+## 🛠️ Tech Stack
+Frontend: React, Vite, Tailwind CSS  
+Backend: FastAPI, Python, OpenCV, Scikit-learn  
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ⚠️ Limitations
+1. Currently may accept irrelevant images because advanced image validation was intentionally not added.
+2. Clear urine sample images are required for better accuracy.
 
-## Expanding the ESLint configuration
+## 👩‍⚕️ Project Owner
+This project was developed for **Sumia Khan**, a medical student.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 👨‍💻 Developed By
+**Malki Aman** <br>
+**Zama Technology**  
+https://zamatechnology.com
