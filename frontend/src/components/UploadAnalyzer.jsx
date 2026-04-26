@@ -8,6 +8,7 @@ import {
   UploadCloud,
   X,
   ImageIcon,
+  Camera,
 } from 'lucide-react';
 import axios from 'axios';
 import ResultCard from './ResultCard';
@@ -18,14 +19,15 @@ const UploadAnalyzer = () => {
     'https://urine-hydration-stone-risk-detection-2o5a.onrender.com';
 
   const API_URL = `${apiBaseUrl.replace(/\/$/, '')}/predict`;
-  console.log("API URL:", API_URL);
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-  const fileInputRef = useRef(null);
+
+  const uploadInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   useEffect(() => {
     return () => {
@@ -86,14 +88,13 @@ const UploadAnalyzer = () => {
       setPreview(null);
     }
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (uploadInputRef.current) uploadInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   const handleAnalyze = async () => {
     if (!image) {
-      setError('Please upload an image first.');
+      setError('Please upload or capture an image first.');
       return;
     }
 
@@ -135,8 +136,8 @@ const UploadAnalyzer = () => {
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <h2 className="text-3xl font-bold text-primary">Upload & Analyze</h2>
           <p className="mt-3 text-medical-subtext">
-            Upload a clear urine sample image for AI-powered hydration and kidney
-            stone risk screening.
+            Upload or capture a clear urine sample image for AI-powered hydration
+            and kidney stone risk screening.
           </p>
         </div>
 
@@ -145,7 +146,7 @@ const UploadAnalyzer = () => {
             <div
               onDragOver={onDragOver}
               onDrop={onDrop}
-              className={`relative h-80 overflow-hidden rounded-3xl border-2 border-dashed bg-white transition-all duration-300 ${
+              className={`relative min-h-[420px] sm:min-h-[320px] overflow-hidden rounded-3xl border-2 border-dashed bg-white transition-all duration-300 ${
                 preview
                   ? 'border-primary/25'
                   : 'border-slate-300 hover:border-primary/50'
@@ -168,17 +169,20 @@ const UploadAnalyzer = () => {
                   </button>
                 </div>
               ) : (
-                <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+                <div className="flex h-full flex-col items-center justify-center px-6 py-8 text-center">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                     <UploadCloud className="h-8 w-8 text-primary" />
                   </div>
 
                   <p className="text-lg font-bold text-primary">
-                    Drag & drop image here
+                    Upload Image
                   </p>
 
                   <p className="mt-1 text-sm text-medical-subtext">
-                    or click anywhere in this box to browse files
+                    Select an image from your device
+                    <span className="block sm:hidden">
+                      or take a photo using your phone camera
+                    </span>
                   </p>
 
                   <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-medical-subtext">
@@ -189,12 +193,41 @@ const UploadAnalyzer = () => {
                     Please upload only a clear urine sample image.
                   </p>
 
+                  <div className="mt-6 flex flex-wrap justify-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => uploadInputRef.current?.click()}
+                      className="btn-primary flex items-center gap-2 px-5 py-3"
+                    >
+                      <UploadCloud className="h-5 w-5" />
+                      Upload Image
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="flex items-center gap-2 rounded-xl bg-secondary px-5 py-3 font-semibold text-white shadow-md transition hover:opacity-90 sm:hidden"
+                    >
+                      <Camera className="h-5 w-5" />
+                      Take Photo
+                    </button>
+                  </div>
+
                   <input
                     type="file"
-                    ref={fileInputRef}
+                    ref={uploadInputRef}
                     onChange={handleImageChange}
-                    className="absolute inset-0 cursor-pointer opacity-0"
+                    className="hidden"
                     accept="image/*"
+                  />
+
+                  <input
+                    type="file"
+                    ref={cameraInputRef}
+                    onChange={handleImageChange}
+                    className="hidden"
+                    accept="image/*"
+                    capture="environment"
                   />
                 </div>
               )}
@@ -212,6 +245,7 @@ const UploadAnalyzer = () => {
             )}
 
             <button
+              type="button"
               onClick={handleAnalyze}
               disabled={loading}
               className="btn-primary w-full disabled:bg-slate-300"
